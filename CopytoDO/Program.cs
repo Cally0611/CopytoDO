@@ -16,13 +16,23 @@ namespace CopytoDO
 {
     internal class Program
     {
-
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
             Console.WriteLine("Test");
             ReadProduct();
 
-
+            try
+            {
+                Logger.Info("Hello world");
+                Console.WriteLine("Now this");
+                System.Console.ReadKey();
+                
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Goodbye cruel world");
+            }
 
 
 
