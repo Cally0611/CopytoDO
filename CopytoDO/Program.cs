@@ -26,6 +26,7 @@ namespace CopytoDO
             {
                 Logger.Info("Hello world");
                 Console.WriteLine("Now this");
+                Console.WriteLine("Now thisone");
                 System.Console.ReadKey();
                 
             }
