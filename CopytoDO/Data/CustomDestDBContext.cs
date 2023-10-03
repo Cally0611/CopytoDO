@@ -10,15 +10,26 @@ namespace CopytoDO.Data
 {
     internal class CustomDestDBContext : OeedashboardContext
     {
+        private readonly IConfiguration _configuration;
+
+        public IConfiguration Configuration
+        {
+            get
+            {
+                return _configuration;
+            }
+        }
+
+        public CustomDestDBContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
+         
 
-            var connectionString = configuration.GetConnectionString("DestExpressDB");
+            var connectionString = Configuration.GetConnectionString("DestExpressDB");
             optionsBuilder.UseSqlServer(connectionString);
         }
     }

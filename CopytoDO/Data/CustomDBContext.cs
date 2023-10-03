@@ -1,6 +1,8 @@
 ﻿using CopytoDO.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +13,28 @@ namespace CopytoDO.Data
 {
     public partial class CustomDBContext : GndLocalReasonsv1Context
     {
+        
+        private readonly IConfiguration _configuration = null!;
+
+        public IConfiguration Configuration 
+        {
+            get
+            {
+                return _configuration;
+            }
+            
+        }
+
+        public CustomDBContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
 
-            var connectionString = configuration.GetConnectionString("LocalExpressDB");
+
+            var connectionString = Configuration.GetConnectionString("LocalExpressDB");
             optionsBuilder.UseSqlServer(connectionString);
         }
 

@@ -1,6 +1,7 @@
-﻿using CopytoDO.DAL;
+﻿
 using CopytoDO.Data;
 using CopytoDO.Models;
+using CopytoDO.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,24 +17,28 @@ namespace CopytoDO
 {
     internal class Program
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        
         static void Main(string[] args)
         {
-            Console.WriteLine("Test");
-            ReadProduct();
+            
+           CallLogger callLogger = new CallLogger();
+            callLogger.Content = "Done this";
+            callLogger.WriteToFile(callLogger.Content);
+            //Console.WriteLine("Test");
+           ReadProduct();
 
-            try
-            {
-                Logger.Info("Hello world");
-                Console.WriteLine("Now this");
-                Console.WriteLine("Now thisone");
-                System.Console.ReadKey();
+            //try
+            //{
+            //    Logger.Info("Hello world");
+            //    Console.WriteLine("Now this");
+            //    Console.WriteLine("Now thisone");
+            //    System.Console.ReadKey();
                 
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Goodbye cruel world");
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Logger.Error(ex, "Goodbye cruel world");
+            //}
 
 
 
@@ -43,15 +48,20 @@ namespace CopytoDO
 
         static void ReadProduct()
         {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
             List<Reasondetail> test = new List<Reasondetail>();
-            using (CustomDBContext dbout = new CustomDBContext())
+            using (CustomDBContext dbout = new CustomDBContext(configuration))
             {
 
                 test = dbout.Reasondetails.FromSqlRaw("EXECUTE spGetLatestData").ToList();
 
             }
 
-            using (CustomDestDBContext dbin = new CustomDestDBContext())
+            using (CustomDestDBContext dbin = new CustomDestDBContext(configuration))
             {
                 //List<OeeDetailsAll> oeedet = test.ConvertAll(new Converter<Reasondetail,OeeDetailsAll>(PointFToPoint));
                 ////dbin.AddRange(oeedet);
@@ -77,8 +87,8 @@ namespace CopytoDO
                 OeeMachine = 5,
                 StopReasonStart = pf.StopTimeStart ?? throw new ArgumentNullException(nameof(pf.StopTimeStart), "DateTime cannot be null"),
                 StopReasonEnd = pf.StopTimeEnd ?? throw new ArgumentNullException(nameof(pf.StopTimeStart), "DateTime cannot be null"),
-                StopMreason = pf.StopMreason,
-                StopSreason = pf.StopSreason
+                StopMreason = pf.StopMreason ?? throw new ArgumentNullException(nameof(pf.StopMreason), "Master Stop Reason cannot be null"),
+                StopSreason = pf.StopSreason ?? throw new ArgumentNullException(nameof(pf.StopSreason), "Sub Stop Reason cannot be null"),
 
             };
         }
